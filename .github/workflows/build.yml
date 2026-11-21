@@ -1,0 +1,26 @@
+name: Build NumWorks App
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install ARM toolchain and nwlink
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi libnewlib-arm-none-eabi make nodejs npm
+          sudo npm install -g nwlink
+      - name: Build .nwa
+        run: make
+      - name: Upload .nwa artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brawl-stars-nwa
+          path: "**/*.nwa"
